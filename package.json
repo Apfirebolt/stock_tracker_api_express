@@ -9,9 +9,9 @@
     "server": "nodemon main.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Amit Prafulla",
   "license": "ISC",
-  "description": "",
+  "description": "Stock Analyzer API using Express and MongoDB",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
