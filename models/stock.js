@@ -18,6 +18,11 @@ const stockSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    account: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Account',
+        required: true
+    },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -27,4 +32,8 @@ const stockSchema = new mongoose.Schema({
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
-module.exports = mongoose.model('Stock', stockSchema);
+const Stock = mongoose.model('Stock', stockSchema);
+
+export {
+    Stock
+}

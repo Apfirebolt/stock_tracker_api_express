@@ -8,6 +8,8 @@ import connectDB from './config/db.js'
 
 import authRoutes from './routes/auth.js'
 import accountRoutes from './routes/account.js'
+import logRoutes from './routes/log.js'
+import stockRoutes from './routes/stock.js'
 
 dotenv.config()
 
@@ -28,6 +30,8 @@ const __dirname = path.resolve()
 
 app.use('/api/auth', authRoutes)
 app.use('/api/accounts', accountRoutes)
+app.use('/api/logs', logRoutes)
+app.use('/api/stocks', stockRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/dist')))

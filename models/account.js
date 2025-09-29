@@ -29,6 +29,10 @@ const accountSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isDefault: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const auditLogSchema = new mongoose.Schema({

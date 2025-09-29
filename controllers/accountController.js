@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler'
-import { Account } from '../models/account.js'
+import { Account, AuditLog } from '../models/account.js'
 
 // @desc    Create a new account
 // @route   POST /api/accounts
@@ -69,7 +69,14 @@ const updateAccountBalance = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Account not found');
     }
-    account.balance = balance;
+    // increment balance
+    account.balance += balance;
+    // add audit log entry
+    await AuditLog.create({
+        action: 'Balance Update',
+        user: req.user._id,
+        details: `Balance updated by ${balance}. New balance: ${account.balance}`,
+    });
     await account.save();
     res.json(account);
 });
@@ -108,6 +115,13 @@ const setDefaultAccount = asyncHandler(async (req, res) => {
         { $set: { isDefault: true } },
         { new: true }
     );
+
+    // add audit log entry
+    await AuditLog.create({
+        action: 'Set Default Account',
+        user: req.user._id,
+        details: `Account ${accountId} set as default`,
+    });
 
     if (!account) {
         res.status(404);

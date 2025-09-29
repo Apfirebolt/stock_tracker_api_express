@@ -1,11 +1,15 @@
 import asyncHandler from 'express-async-handler'
-import Stock from '../models/stockModel.js'
+import { Stock } from '../models/stock.js'
 
 // @desc    Create a new stock
 // @route   POST /api/stocks
 // @access  Public or Private (set as needed)
 const createStock = asyncHandler(async (req, res) => {
-    const stock = new Stock(req.body)
+    const data = req.body
+    if (req.user && req.user._id) {
+        data.user_id = req.user._id
+    }
+    const stock = new Stock(data)
     await stock.save()
     res.status(201).json(stock)
 })
