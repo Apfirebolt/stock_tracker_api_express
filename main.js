@@ -7,6 +7,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import connectDB from './config/db.js'
 
 import authRoutes from './routes/auth.js'
+import accountRoutes from './routes/account.js'
 
 dotenv.config()
 
@@ -26,6 +27,7 @@ app.use(cors({
 const __dirname = path.resolve()
 
 app.use('/api/auth', authRoutes)
+app.use('/api/accounts', accountRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/dist')))

@@ -50,5 +50,9 @@ const auditLogSchema = new mongoose.Schema({
   },
 }); 
 
-module.exports = mongoose.model("Account", accountSchema);
-module.exports = mongoose.model("AuditLog", auditLogSchema);
+
+// export account and audit log modelsconst Account = mongoose.model("Account", accountSchema);
+const AuditLog = mongoose.model("AuditLog", auditLogSchema);
+const Account = mongoose.model("Account", accountSchema);
+
+export { Account, AuditLog };
