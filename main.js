@@ -6,6 +6,10 @@ import morgan from 'morgan'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import connectDB from './config/db.js'
 
+// 1. IMPORT SWAGGER PACKAGES
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsdoc from 'swagger-jsdoc'
+
 import authRoutes from './routes/auth.js'
 import accountRoutes from './routes/account.js'
 import logRoutes from './routes/log.js'
@@ -27,6 +31,49 @@ app.use(cors({
 }))
 
 const __dirname = path.resolve()
+
+
+// 2. SWAGGER CONFIGURATION (OPENAPI SPECS)
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Finance API Documentation',
+      version: '1.0.0',
+      description: 'Documentation for the Express Finance Backend API',
+    },
+    servers: [
+      {
+        url: '/api', // Use a relative path if the server handles both HTTP/HTTPS
+        description: 'Primary API Server'
+      },
+      {
+        url: 'http://localhost:5000/api', // Example URL for local development
+        description: 'Development Server'
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{
+      bearerAuth: []
+    }],
+  },
+  apis: ['./routes/*.js'], 
+};
+
+// Generate the Swagger Specification
+const swaggerSpecs = swaggerJsdoc(swaggerOptions);
+
+// 3. SWAGGER UI ROUTE
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 
 app.use('/api/auth', authRoutes)
 app.use('/api/accounts', accountRoutes)
