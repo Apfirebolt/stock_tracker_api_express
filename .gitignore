@@ -40,3 +40,10 @@ coverage/
 # Misc
 *.tgz
 !.gitkeep
+
+# ignore pycache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/

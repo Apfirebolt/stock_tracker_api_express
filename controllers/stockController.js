@@ -51,7 +51,7 @@ const getStocks = asyncHandler(async (req, res) => {
   ]);
 
   res.json({
-    stocks,
+    data: stocks,
     total,
     itemsPerPage,
     page,
