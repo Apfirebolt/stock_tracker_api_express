@@ -37,8 +37,27 @@ const createStock = asyncHandler(async (req, res) => {
 // @route   GET /api/stocks
 // @access  Public or Private (set as needed)
 const getStocks = asyncHandler(async (req, res) => {
-  const stocks = await Stock.find({ user_id: req.user._id });
-  res.json(stocks);
+  const itemsPerPage = parseInt(req.query.limit, 10) || 5;
+  const page = parseInt(req.query.page, 10) || 1;
+
+  const filter = { user_id: req.user._id };
+
+  const [stocks, total] = await Promise.all([
+    Stock.find(filter)
+      .skip(itemsPerPage * (page - 1))
+      .limit(itemsPerPage)
+      .exec(),
+    Stock.countDocuments(filter),
+  ]);
+
+  res.json({
+    stocks,
+    total,
+    itemsPerPage,
+    page,
+    lastPage: Math.ceil(total / itemsPerPage),
+    success: true,
+  });
 });
 
 // @desc    Get single stock
@@ -86,7 +105,7 @@ const updateStock = asyncHandler(async (req, res) => {
       throw new Error("Quantity cannot be negative");
     }
 
-    relatedAccount.balance += sell_price * (quantity);
+    relatedAccount.balance += sell_price * quantity;
     await relatedAccount.save();
     // update stock quantity
     stock.quantity -= quantity;

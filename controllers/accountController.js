@@ -16,6 +16,12 @@ const createAccount = asyncHandler(async (req, res) => {
   });
 
   if (account) {
+    // create a log entry for account creation
+    await AuditLog.create({
+        action: 'Account Creation',
+        user: req.user._id,
+        details: `Account ${account._id} created.`,
+    });
     res.status(201).json(account);
   } else {
     res.status(400);
@@ -49,6 +55,12 @@ const getAccountById = asyncHandler(async (req, res) => {
 // @access  Public or Private (set as needed)
 const updateAccount = asyncHandler(async (req, res) => {
     const account = await Account.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    // create a log entry for account update
+    await AuditLog.create({
+        action: 'Account Update',
+        user: req.user._id,
+        details: `Account ${req.params.id} updated.`,
+    });
     if (account) {
         res.json(account)
     } else {
@@ -86,6 +98,12 @@ const updateAccountBalance = asyncHandler(async (req, res) => {
 // @access  Public or Private (set as needed)
 const deleteAccount = asyncHandler(async (req, res) => {
     const account = await Account.findByIdAndDelete(req.params.id)
+    // create a log entry for account deletion
+    await AuditLog.create({
+        action: 'Account Deletion',
+        user: req.user._id,
+        details: `Account ${req.params.id} deleted.`,
+    });
     if (account) {
         res.json({ message: 'Account deleted' })
     } else {
