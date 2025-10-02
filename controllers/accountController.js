@@ -27,7 +27,7 @@ const createAccount = asyncHandler(async (req, res) => {
 // @route   GET /api/accounts
 // @access  Public or Private (set as needed)
 const getAccounts = asyncHandler(async (req, res) => {
-    const accounts = await Account.find().populate('user', 'email firstName lastName')
+    const accounts = await Account.find({ user: req.user._id }).populate('user', 'email firstName lastName')
     res.json(accounts)
 })
 
