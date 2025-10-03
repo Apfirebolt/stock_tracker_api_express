@@ -12,33 +12,45 @@ const createWatchlist = asyncHandler(async (req, res) => {
         stocks,
         user_id: req.user._id,
     });
-    const session = await Watchlist.startSession();
-    session.startTransaction();
-    try {
-        await watchlist.save({ session });
-        // create an audit log
-        await AuditLog.create([{
-            user: req.user._id,
-            details: `Created watchlist ${name}.`,
-            action: "CREATE_WATCHLIST",
-        }], { session });
+    const createdWatchlist = await watchlist.save();
 
-        await session.commitTransaction();
-        session.endSession();
-    } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
-        throw error;
-    }
-    res.status(201).json(watchlist);
+    // Log the creation action
+    const log = new AuditLog({
+        user: req.user._id,
+        details: `Created watchlist: ${name}`,
+        action: "CREATE_WATCHLIST",
+    });
+    await log.save();
+
+    res.status(201).json(createdWatchlist);
 });
 
 // @desc    Get all watchlists for user
 // @route   GET /api/watchlists
 // @access  Private
 const getWatchlists = asyncHandler(async (req, res) => {
-    const watchlists = await Watchlist.find({ user_id: req.user._id }).populate("stocks");
-    res.json(watchlists);
+    const itemsPerPage = parseInt(req.query.limit, 10) || 5;
+    const page = parseInt(req.query.page, 10) || 1;
+
+    const filter = { user_id: req.user._id };
+
+    const [watchlists, total] = await Promise.all([
+        Watchlist.find(filter)
+            .skip(itemsPerPage * (page - 1))
+            .limit(itemsPerPage)
+            .populate("stocks")
+            .exec(),
+        Watchlist.countDocuments(filter),
+    ]);
+
+    res.json({
+        data: watchlists,
+        total,
+        itemsPerPage,
+        page,
+        lastPage: Math.ceil(total / itemsPerPage),
+        success: true,
+    });
 });
 
 // @desc    Get single watchlist

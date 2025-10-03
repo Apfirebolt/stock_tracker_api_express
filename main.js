@@ -14,6 +14,7 @@ import authRoutes from './routes/auth.js'
 import accountRoutes from './routes/account.js'
 import logRoutes from './routes/log.js'
 import stockRoutes from './routes/stock.js'
+import watchlistRoutes from './routes/watchlist.js'
 
 dotenv.config()
 
@@ -74,11 +75,11 @@ const swaggerSpecs = swaggerJsdoc(swaggerOptions);
 // 3. SWAGGER UI ROUTE
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
-
 app.use('/api/auth', authRoutes)
 app.use('/api/accounts', accountRoutes)
 app.use('/api/logs', logRoutes)
 app.use('/api/stocks', stockRoutes)
+app.use('/api/watchlist', watchlistRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/dist')))
