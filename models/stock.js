@@ -41,8 +41,24 @@ const watchlistSchema = new mongoose.Schema({
         trim: true
     },
     stocks: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Stock'
+        name: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        ticker: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        logo: {
+            type: String,
+            trim: true
+        },
+        exchange: {
+            type: String,
+            trim: true
+        }
     }],
     user_id: {
         type: mongoose.Schema.Types.ObjectId,

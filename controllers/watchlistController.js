@@ -80,7 +80,22 @@ const updateWatchlist = asyncHandler(async (req, res) => {
   });
   if (watchlist) {
     if (name) watchlist.name = name;
-    if (stocks) watchlist.stocks = stocks;
+    if (stocks) {
+      // check for duplicates before adding
+      const existingTickers = watchlist.stocks.map((s) => s.ticker);
+      const newStocks = stocks.filter(
+        (s) => !existingTickers.includes(s.ticker)
+      );
+      watchlist.stocks = [...watchlist.stocks, ...newStocks];
+
+      // there should not be more than 10 stocks in a watchlist
+      if (watchlist.stocks.length > 10) {
+        res.status(400);
+        throw new Error("A watchlist cannot have more than 10 stocks");
+      }
+      // save the updated stocks array
+      watchlist.stocks = watchlist.stocks;
+    };
     await watchlist.save();
 
     // Log the update action
