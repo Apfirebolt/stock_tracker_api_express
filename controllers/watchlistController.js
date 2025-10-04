@@ -121,6 +121,47 @@ const updateWatchlist = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update multiple watchlist
+// @route   PUT /api/watchlists/update
+// @access  Private
+const updateMultipleWatchlist = asyncHandler(async (req, res) => {
+  const { watchlists, stock } = req.body;
+  if (!Array.isArray(watchlists) || watchlists.length === 0) {
+    res.status(400);
+    throw new Error("Watchlists array is required");
+  }
+  const updatedWatchlists = [];
+  for (const watchlistId of watchlists) {
+    const watchlist = await Watchlist.findOne({
+      _id: watchlistId,
+      user_id: req.user._id,
+    });
+    if (watchlist) {
+      const existingTickers = watchlist.stocks.map((s) => s.ticker);
+      if (!existingTickers.includes(stock.ticker)) {
+        if (watchlist.stocks.length >= 10) {
+          res.status(400);
+          throw new Error(
+            `Watchlist ${watchlist.name} cannot have more than 10 stocks`
+          );
+        }
+        watchlist.stocks.push(stock);
+        await watchlist.save();
+        updatedWatchlists.push(watchlist);
+
+        // Log the update action
+        const log = new AuditLog({
+          user: req.user._id,
+          details: `Added stock ${stock.ticker} to watchlist: ${watchlist.name}`,
+          action: "UPDATE_WATCHLIST",
+        });
+        await log.save();
+      }
+    }
+  }
+  res.json({ updatedWatchlists, success: true });
+});
+
 // @desc    Delete watchlist
 // @route   DELETE /api/watchlists/:id
 // @access  Private
@@ -145,5 +186,6 @@ export {
   getWatchlists,
   getWatchlistById,
   updateWatchlist,
+  updateMultipleWatchlist,
   deleteWatchlist,
 };
