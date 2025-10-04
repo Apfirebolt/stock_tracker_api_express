@@ -108,6 +108,51 @@ npm run server
 ```
 The API Should be running on port 5000 in your system.
 
+### Running using Docker containers
+
+We'd be using three Docker containers for this. Our aim would be to run the back-end API on port 80 using Nginx. This is the docker-compose file we'd be using. Obviously, you need to have Docker and preferably Docker Desktop installed on your machine.
+
+```YAML
+version: '3.8'
+services:
+  express:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: express_stocks
+    ports:
+      - 5000:5000
+    environment:
+      - MONGO_URI=mongodb://mongo/express-stocks
+      - JWT_SECRET=somesupersecret
+      - NODE_ENV=development
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: mongo_stocks
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - '27017:27017'
+
+  nginx:
+    image: nginx
+    container_name: nginx_goals
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - express
+
+volumes:
+  mongo_data:
+```
+
 ## <a name="more">🚀 More</a>
 
 **Check by blog for more updates**
