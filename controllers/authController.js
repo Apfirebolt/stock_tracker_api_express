@@ -99,10 +99,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.email = req.body.email || user.email
     user.userType = req.body.userType || user.userType
 
-    if (req.body.password) {
-      user.password = req.body.password
-    }
-
     const updatedUser = await user.save()
 
     res.status(200).json({
@@ -120,9 +116,35 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 })
 
+/**
+ * @desc    Change user password
+ * @route   PUT /api/auth/change-password
+ * @access  Private
+ */
+const changePassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id)
+  const { currentPassword, newPassword } = req.body
+
+  if (!currentPassword || !newPassword) {
+    res.status(400)
+    throw new Error('Current and new password are required')
+  }
+
+  if (user && (await user.matchPassword(currentPassword))) {
+    user.password = newPassword
+    user.markModified('password')
+    await user.save()
+    res.status(200).json({ message: 'Password updated successfully' })
+  } else {
+    res.status(401)
+    throw new Error('Current password is incorrect')
+  }
+})
+
 export {
   authUser,
   registerUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  changePassword
 }

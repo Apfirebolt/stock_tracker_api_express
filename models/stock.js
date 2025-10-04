@@ -1,78 +1,83 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const stockSchema = new mongoose.Schema({
+const stockSchema = new mongoose.Schema(
+  {
     symbol: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     buy_price: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     quantity: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     comments: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true,
     },
     account: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Account',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+      required: true,
     },
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
-}, {
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
-});
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+  }
+);
 
 // a watchlist model would have name and there could be many stocks in a watchlist
 
-const watchlistSchema = new mongoose.Schema({
+const watchlistSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
-    stocks: [{
+    stocks: [
+      {
         name: {
-            type: String,
-            required: true,
-            trim: true
+          type: String,
+          required: true,
+          trim: true,
         },
         ticker: {
-            type: String,
-            required: true,
-            trim: true
+          type: String,
+          required: true,
+          trim: true,
         },
         logo: {
-            type: String,
-            trim: true
+          type: String,
+          trim: true,
         },
         exchange: {
-            type: String,
-            trim: true
-        }
-    }],
+          type: String,
+          trim: true,
+        },
+      },
+    ],
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
-}, {
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
-});
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+  }
+);
 
-const Stock = mongoose.model('Stock', stockSchema);
-const Watchlist = mongoose.model('Watchlist', watchlistSchema);
+const Stock = mongoose.model("Stock", stockSchema);
+const Watchlist = mongoose.model("Watchlist", watchlistSchema);
 
-export {
-    Stock,
-    Watchlist
-}
+export { Stock, Watchlist };

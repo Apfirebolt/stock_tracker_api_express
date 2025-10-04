@@ -4,7 +4,8 @@ import {
   authUser,
   registerUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  changePassword
 } from '../controllers/authController.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 
@@ -15,5 +16,7 @@ router
   .route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile)
+
+router.put('/change-password', protect, changePassword)
 
 export default router
